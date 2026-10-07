@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#c1ff28"><meta name="description" content="The family's Juice Box Game. Scan flap symbols, earn points, and request rewards.">
+  <title>The Fun Juice Box Game</title><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/styles.css">
+  <script type="module" src="/app.js"></script>
+</head>
+<body>
+  <header class="topbar"><a href="/" class="brand"><span class="brand-icon">🧃</span><span>THE FUN<br><b>JUICE BOX GAME</b></span></a><span class="family-tag">A game by the kids. For the family.</span><button class="quiet" id="help">How to play</button></header>
+  <main>
+    <section class="game-heading"><div><span class="eyebrow">OPEN A BOX. FIND YOUR SYMBOLS.</span><h1>Little flaps.<br><span>Big points.</span></h1></div><div class="player-select"><label for="player">WHO'S PLAYING?</label><div><select id="player" aria-label="Current player"><option>Loading players…</option></select><button class="icon-button" id="add-player" aria-label="Add a player">+</button></div></div></section>
+    <nav class="tabs" aria-label="Game sections"><button data-tab="scan" aria-current="page">Scan & earn</button><button data-tab="rewards">Rewards</button><button data-tab="family">Family scores</button><button data-tab="history">Activity</button></nav>
+    <div id="load-error" class="error" hidden><span></span><button id="retry-load">Try again</button></div>
+    <section id="scan-view" class="view">
+      <div class="play-grid">
+        <div class="scan-column">
+          <div class="points-strip"><div><span id="points-name">YOUR POINTS</span><strong id="points">—</strong></div><div class="points-star" aria-hidden="true">★</div><div class="next-reward"><b id="next-label">Choose your player</b><span id="next-detail">Ready for a fresh box?</span></div></div>
+          <article class="scanner-card">
+            <div class="card-heading"><div><span class="step-tag">LET'S COLLECT</span><h2>Scan your flap</h2></div><span class="scan-count" id="flap-number">FLAP 1</span></div>
+            <div class="camera-stage" id="camera-stage"><video id="camera" autoplay playsinline muted hidden></video><img id="photo" alt="Captured flap" hidden><div class="camera-idle" id="camera-idle"><span aria-hidden="true">◎</span><h3>A little colour. A lot of fun.</h3><p>Open a flap and place its symbol<br>inside the square.</p></div><div class="reticle" id="reticle" hidden></div><span class="camera-tip" id="camera-tip">ONE FLAP AT A TIME</span></div>
+            <p id="camera-status" class="status" role="status">Your camera only opens when you tap below.</p>
+            <div class="scanner-actions"><button class="primary" id="start-camera">Open camera</button><button class="primary" id="capture" hidden>Capture symbol</button><button class="quiet" id="stop-camera" hidden>Close camera</button></div>
+            <div class="fallback-actions"><label class="text-button" for="upload">Use a photo<input id="upload" type="file" accept="image/*" capture="environment" hidden></label><button class="text-button" id="manual">Choose symbol manually</button></div>
+            <div class="review" id="review" hidden><h3 id="recognition-title">Which symbol is this?</h3><p id="recognition-note">Check the colours before adding this flap.</p><div class="symbol-grid" id="symbol-picker"></div><button class="primary" id="confirm-flap" disabled>Add this flap</button><button class="text-button" id="retake">Try again</button></div>
+            <div class="box-review" id="box-review" hidden><h3>Your box so far</h3><div id="flap-list"></div><p id="box-estimate"></p><p id="box-player" class="muted"></p><div class="claim-actions"><button class="primary" id="scan-second">Scan the other flap</button><button class="secondary" id="claim">Collect points</button><button class="text-button" id="discard">Cancel this box</button></div></div>
+          </article>
+        </div>
+        <aside class="rules-column"><article class="score-guide"><span class="eyebrow">YOUR COLOUR CHEAT SHEET</span><h2>Spot it. Scan it.<br>Score it.</h2><div id="score-symbols"></div><div class="double-callout"><span>✦</span><div><b>Seeing double?</b><p>Same symbol on both flaps<br>of one box = <strong>100 points!</strong></p></div></div></article><div class="family-note"><span>🧃</span><p><b>A fresh box, a fresh chance.</b><br>Only collect each box once. Confirm both flaps together to earn a double.</p></div></aside>
+      </div>
+    </section>
+    <section id="rewards-view" class="view" hidden><div class="section-heading"><div><span class="eyebrow">YOU EARNED IT</span><h2>Pick your next reward.</h2></div><p><strong id="reward-balance">0</strong> points to spend</p></div><p class="muted">These are family rewards from your poster. A request spends points; a grown-up supplies the reward.</p><div class="reward-grid" id="reward-grid"></div><h3>Your reward requests</h3><div id="reward-requests"></div></section>
+    <section id="family-view" class="view" hidden><div class="section-heading"><div><span class="eyebrow">THE JUICE CREW</span><h2>Every player counts.</h2></div><button class="secondary" id="family-add">Add a player</button></div><div id="family-list" class="family-list"></div></section>
+    <section id="history-view" class="view" hidden><div class="section-heading"><div><span class="eyebrow">ONE BOX AT A TIME</span><h2>Your point story.</h2></div></div><div id="history-list"></div></section>
+    <footer>Made for your family's game. <span>Play · Earn · Redeem · Enjoy</span></footer>
+  </main>
+  <dialog id="player-dialog"><form id="player-form"><span class="eyebrow">WELCOME TO THE JUICE CREW</span><h2>Add a player</h2><label for="player-name">Player nickname</label><input id="player-name" maxlength="30" required placeholder="e.g. JuiceBoxFan" autocomplete="off"><p class="dialog-error" id="player-error" role="alert"></p><div class="dialog-actions"><button type="button" class="quiet" data-close="player-dialog">Cancel</button><button class="primary" id="save-player">Add player</button></div></form></dialog>
+  <dialog id="login-dialog"><form id="login-form"><span class="eyebrow">FAMILY GAME</span><h2>Let’s play.</h2><label for="password">Family password</label><input id="password" type="password" required autocomplete="current-password"><p class="dialog-error" id="login-error" role="alert"></p><button class="primary">Unlock game</button></form></dialog>
+  <dialog id="help-dialog" class="help-dialog"><button class="dialog-close" data-close="help-dialog" aria-label="Close instructions">×</button><h2>Look under the flaps!</h2><p>1. Choose your player. 2. Open both flaps. 3. Scan one symbol at a time and confirm the colours. 4. Collect points for the box.</p><p><b>A double is 100 points total.</b> The two matching symbols must come from the same box. Photos stay on this phone; only the symbols and a photo fingerprint are saved.</p><p>The scanner suggests colours and may need your help. The same box can look different in another photo, so please follow the family rule: one claim per box.</p><img src="/flaps.jpg" alt="Your family's illustrated guide to opening juice-box flaps" loading="lazy"><img src="/rules.jpg" alt="Your family's Juice Box Flap Game points poster" loading="lazy"></dialog>
+  <dialog id="redeem-dialog"><span class="eyebrow">A LITTLE TREAT</span><h2 id="redeem-title">Request reward?</h2><p id="redeem-detail"></p><p class="muted">Ask a grown-up to supply this reward. This app does not buy or send prizes.</p><p id="redeem-error" class="dialog-error" role="alert"></p><div class="dialog-actions"><button class="quiet" data-close="redeem-dialog">Cancel</button><button class="primary" id="confirm-redeem">Spend points & request</button></div></dialog>
+  <div class="toast" id="toast" role="status" hidden></div>
+</body>
+</html>
